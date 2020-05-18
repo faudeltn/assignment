@@ -5,17 +5,9 @@ mariadb_version: '10.3'
 mariadb_root_password: 'Passw0rd'
 
 #PHP Settings
+php_version: "7.4"
 remi_repo_name: "remi-php74"
 timezone: "Europe/Rome"
-php7_modules:
-  - php74-php 
-  - php74-php-common 
-  - php74-php-opcache 
-  - php74-php-mcrypt 
-  - php74-php-cli 
-  - php74-php-gd 
-  - php74-php-curl 
-  - php74-php-mysqlnd
 
 #MySQL Settings For Wordpress
 mysql_db: "yallalabs"
