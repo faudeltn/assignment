@@ -1,0 +1,12 @@
+---
+
+# ansible-playbook -i inventory/main.yml -e @vars/main.yml lamp-install.yml
+
+- hosts: all
+  become: yes
+  roles:
+       - install_epel
+       - install_mariadb
+       - install_httpd
+       - install_php7
+       - install_wordpress
