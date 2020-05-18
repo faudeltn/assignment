@@ -12,7 +12,7 @@
 
 - name: 1. RedHat 8 | Install Php Extensions
   dnf:
-    enablerepo: php:remi-7.4
+    enablerepo: php:'{{ php_version }}'
     name: '{{ php_rhel_modules }}'
     state: present
   when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "8"
