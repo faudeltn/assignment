@@ -1,0 +1,14 @@
+---
+
+timezone: "Europe/Rome"
+php_rhel:
+  - php 
+  - php-common 
+  - php-mysqlnd
+
+
+php_ubuntu:
+  - php
+  - libapache2-mod-php
+  - php-mysql
+

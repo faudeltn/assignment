@@ -1,0 +1,62 @@
+---
+
+- name: 1. RedHat | Add official MariaDB repository
+  yum_repository:
+    name: "{{ item.name }}"
+    description: "{{ item.description }}"
+    baseurl: "{{ item.baseurl }}"
+    gpgcheck: "{{ item.gpgcheck }}"
+    gpgkey: "{{ item.gpgkey }}"
+    state: "{{ item.state | default('present') }}"
+  with_items: "{{ mariadb_repo_yum }}"
+  when: ansible_os_family == "RedHat"
+  tags: mariadb
+
+
+- name: 1. Ubuntu | Add repository key to the system
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: F1656F24C74CD1D8
+    state: present
+  when: ansible_distribution == "Ubuntu"
+  tags: mariadb
+
+- name: 1. Ubuntu | Add official MariaDB repository
+  apt_repository:
+    repo: '{{ mariadb_repo_apt }}'
+    state: present
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu"
+  tags: mariadb
+  
+- name: 2. RedHat 7 | Install mariadb-server and MySQL-python package
+  yum:
+    name: '{{ rhel7_mariadb_packages }}'
+    state: installed
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
+  tags: mariadb
+
+- name: 2. RedHat 8 | Install mariadb-server and MySQL-python package
+  yum:
+    name: '{{ rhel8_mariadb_packages }}'
+    state: installed
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "8"
+  tags: mariadb
+
+
+
+- name: 2. Ubuntu | Install mariadb-server and python-mysqldb package
+  apt:
+    name: '{{ ubuntu_mariadb_packages }}'
+    state: present
+    update_cache: yes
+    install_recommends: yes
+  when: ansible_distribution == "Ubuntu"
+  tags: mariadb
+  
+- name: 3. Ensure Mariadb service is started
+  service:
+    name: "{{ mariadb_service }}"
+    state: started
+    enabled: true
+  tags: mariadb

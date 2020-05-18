@@ -1,0 +1,31 @@
+---
+
+php_rhel_modules:
+  - php-common 
+  - php-opcache 
+  - php-mcrypt 
+  - php-cli 
+  - php-gd 
+  - php-curl 
+  - php-mysql
+  - php-mysqlnd
+  - php-mbstring
+  - php-xml
+  - php-xmlrpc
+  - php-soap
+  - php-intl
+  - php-zip
+
+
+
+php_ubuntu_modules:
+  - php-curl
+  - php-gd
+  - php-mbstring
+  - php-xml
+  - php-xmlrpc
+  - php-soap
+  - php-intl
+  - php-zip
+
+

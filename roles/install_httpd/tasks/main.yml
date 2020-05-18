@@ -1,0 +1,73 @@
+---
+
+
+- name: 0. RedHat | Check if firewalld is running
+  command: systemctl is-active firewalld
+  changed_when: False
+  ignore_errors: True  # rc is 3 when firewalld is stopped
+  register: firewalld_result
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version >= "7"
+  tags: firewalld
+
+
+- name: 0. Ubuntu | check whether ufw status is active
+  shell: ufw status
+  changed_when: False
+  ignore_errors: True
+  register: ufw_result
+  when: ansible_distribution == "Ubuntu"
+
+
+- name: 1. RedHat | Install httpd package
+  yum:
+    name: httpd
+    state: installed
+  when: ansible_os_family == "RedHat"
+  tags: apache
+
+- name: 1. Ubuntu | Install Apache2 package
+  yum:
+    name: apache2
+    state: present
+  when: ansible_distribution == "Ubuntu"
+  tags: apache
+
+
+- name: 2. RedHat | Copy httpd.conf with some extra settings
+  template:
+    src: templates/httpd.conf.j2
+    dest: /etc/httpd/conf/httpd.conf
+  when: ansible_os_family == "RedHat"  
+  
+- name: 3. RedHat | Ensure service is started
+  service:
+    name: httpd
+    state: started
+    enabled: true
+  when: ansible_os_family == "RedHat"  
+  tags: apache
+
+- name: 3. Ubuntu | Ensure service is started
+  service:
+    name: apache2
+    state: started
+    enabled: true
+  when: ansible_distribution == "Ubuntu"   
+  tags: apache
+   
+- name: 4. RedHat | Allow http Protocol
+  firewalld:
+    service: http
+    permanent: yes
+    state: enabled
+    immediate: yes
+  when: ansible_os_family == "RedHat" and firewalld_result.stdout == "active"
+  tags: firewalld
+
+- name: 4. Ubuntu | Allow http on port 80
+  ufw:
+    rule: allow
+    port: "80"
+    proto: tcp
+  when: ansible_distribution == "Ubuntu" and "'inactive' not in ufw_result.stdout"
+  tags: ufw

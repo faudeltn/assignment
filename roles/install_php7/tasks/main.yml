@@ -1,0 +1,45 @@
+---
+
+
+- name: 1. RedHat | Install REMI Repo
+  yum: 
+    name: "{{ remi_repo_url }}"
+    state: present
+  when: ansible_os_family == "RedHat"
+  tags: php 
+
+- name: 2. RedHat | Import remi GPG key.
+  rpm_key:
+    key: "{{ remi_repo_gpg_key_url }}"
+    state: present
+  when: ansible_os_family == "RedHat"
+  tags: php
+
+
+- name: 3. RedHat 7 | Install PHP modules
+  yum:
+    enablerepo: '{{ remi_repo_name }}'
+    name: '{{ php_rhel }}'
+    state: present
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "7" 
+  tags: php
+
+
+- name: 3. RedHat 8 | Enable REMI Repo 
+  shell:
+    cmd: dnf module enable -y php:remi-7.4
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "8"
+
+- name: 3. RedHat 8 | Install PHP modules
+  dnf:
+    name: '{{ php_rhel }}'
+    state: present
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "8" 
+
+- name: 3. Ubuntu | Install PHP modules
+  apt:
+    name: '{{ php_ubuntu }}'
+    update_cache: yes 
+    state: latest
+  when: ansible_distribution == "Ubuntu"
+  tags: php  

@@ -1,0 +1,73 @@
+---
+
+# This command will fail when the root password was set previously
+- name: 1. | Check if root password is set
+  shell: >
+    mysqladmin -u root status
+  changed_when: false
+  failed_when: false
+  register: root_pwd_check
+  tags: mariadb
+
+- name: 2. | Set MariaDB root password for the first time (root@localhost)
+  mysql_user:
+    name: root
+    password: "{{ mariadb_root_password }}"
+    host: localhost
+    state: present
+  when: root_pwd_check.rc == 0
+  tags: mariadb
+
+#- pause:
+#    secondes: 20
+
+#- name: 2. | Set the root password
+#  mysql_user:
+#    name: root
+#    password: "{{ mariadb_root_password }}"
+#    login_unix_socket: /var/run/mysqld/mysqld.sock
+#  when: root_pwd_check.rc == 0 and ansible_distribution == "Ubuntu"
+#  tags: mariadb
+
+- name: 3. | Set MariaDB root password for 127.0.0.1, ::1
+  mysql_user:
+    name: root
+    password: "{{ mariadb_root_password }}"
+    host: "{{ item }}"
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
+    state: present
+  with_items:
+    - ::1
+    - 127.0.0.1
+  when: root_pwd_check.rc == 0
+  tags: mariadb
+
+- name: 4. | Remove test database
+  mysql_db:
+    name: test
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
+    state: absent
+  when: root_pwd_check.rc == 0
+  tags: mariadb
+
+- name: 5. | Remove Anonymous Users
+  mysql_user:
+    name: ''
+    host_all: yes
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
+    state: absent
+  when: root_pwd_check.rc == 0
+  tags: mariadb
+
+- name: 6. | Disallow root login remotely
+  mysql_user:
+    name: 'root'
+    host: "{{ ansible_nodename }}"
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
+    state: absent
+  when: root_pwd_check.rc == 0
+  tags: mariadb

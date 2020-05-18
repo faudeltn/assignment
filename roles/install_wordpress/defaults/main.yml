@@ -1,0 +1,13 @@
+---
+
+#MySQL Settings
+mysql_db: "wordpress"
+mysql_user: "lotfi"
+mysql_password: "password"
+
+#HTTP Settings
+http_host: "yallalabs.local"
+http_conf: "yallalabs-local.conf"
+http_port: "80"
+
+

@@ -1,0 +1,19 @@
+---
+
+remi_repo_url: "http://rpms.remirepo.net/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm"
+remi_repo_gpg_key_url: "http://rpms.remirepo.net/RPM-GPG-KEY-remi"
+
+
+remi_repo_name: "remi-php74"
+timezone: "Europe/Rome"
+php7_modules:
+  - php74-php 
+  - php74-php-common 
+  - php74-php-opcache 
+  - php74-php-mcrypt 
+  - php74-php-cli 
+  - php74-php-gd 
+  - php74-php-curl 
+  - php74-php-mysqlnd
+
+

@@ -1,0 +1,23 @@
+---
+
+- name: 1. RedHat | Check if EPEL repo is already configured.
+  stat: path={{ epel_repofile_path }}
+  register: epel_repofile_result
+  when: ansible_os_family == "RedHat"
+  tags: epel
+ 
+- name: 2. RedHat | Install EPEL repo.
+  yum:
+    name: "{{ epel_repo_url }}"
+    state: present
+  #register: result
+  when: ansible_os_family == "RedHat"
+  tags: epel 
+ 
+- name: 1. RedHat | Import EPEL GPG key.
+  rpm_key:
+    key: "{{ epel_repo_gpg_key_url }}"
+    state: present
+  when: ansible_os_family == "RedHat"
+  tags: epel
+

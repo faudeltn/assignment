@@ -1,0 +1,133 @@
+---
+
+
+# PHP Setup
+- name: 1. RedHat 7 | Install Php Extensions
+  yum:
+    enablerepo: '{{ remi_repo_name }}'
+    name: '{{ php_rhel_modules }}'
+    state: installed
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
+  tags: wordpress
+
+- name: 1. RedHat 8 | Install Php Extensions
+  dnf:
+    enablerepo: php:remi-7.4
+    name: '{{ php_rhel_modules }}'
+    state: present
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "8"
+  tags: wordpress
+
+
+- name: 1. Ubuntu  | Install Php Extensions
+  apt:
+    name: '{{ php_ubuntu_modules }}'
+    update_cache: yes
+    state: latest
+  when: ansible_distribution == "Ubuntu"  
+  tags: wordpress 
+
+# Apache Configuration
+- name: 2. RedHat | Create document root
+  file:
+    path: "/var/www/{{ http_host }}"
+    state: directory
+    owner: "apache"
+    group: "apache"
+    mode: '0755'
+  when: ansible_os_family == "RedHat"  
+  tags: httpd
+
+
+- name: 2. Ubuntu | Create document root
+  file:
+    path: "/var/www/{{ http_host }}"
+    state: directory
+    owner: "www-data"
+    group: "www-data"
+    mode: '0755'
+  when: ansible_distribution == "Ubuntu" 
+  tags: apache
+
+- name: 3. | Download and unpack latest WordPress
+  unarchive:
+    src: https://wordpress.org/latest.tar.gz
+    dest: "/var/www/{{ http_host }}"
+    remote_src: yes
+    extra_opts: [--strip-components=1]
+  tags: wordpress
+
+- name: 4. | Set up wp-config
+  template:
+    src: "templates/wp-config.php.j2"
+    dest: "/var/www/{{ http_host }}/wp-config.php"
+  tags: wordpress
+
+- name: 5. RedHat | Set ownership
+  file:
+    path: "/var/www/{{ http_host }}/"
+    state: directory
+    recurse: yes
+    owner: apache
+    group: apache
+  when: ansible_os_family == "RedHat"
+  tags: wordpress
+
+- name: 5. Ubuntu | Set ownership
+  file:
+    path: "/var/www/{{ http_host }}/"
+    state: directory
+    recurse: yes
+    owner: "www-data"
+    group: "www-data"
+  when: ansible_distribution == "Ubuntu"
+  tags: wordpress
+
+- name: 6. | Set permissions for directories
+  shell: "/usr/bin/find /var/www/{{ http_host }}/ -type d -exec chmod 750 {} \\;"
+  tags: wordpress
+
+- name: 7. | Set permissions for files
+  shell: "/usr/bin/find /var/www/{{ http_host }}/ -type f -exec chmod 640 {} \\;"
+  tags: wordpress
+
+- name: 8. RedHat | Set up Apache VirtualHost
+  template:
+    src: "templates/httpd.conf.j2"
+    dest: "/etc/httpd/conf.d/{{ http_conf }}"
+  notify: restart httpd
+  when: ansible_os_family == "RedHat"
+  tags: httpd
+
+- name: 8. Ubuntu | Set up Apache VirtualHost
+  template:
+    src: "templates/apache.conf.j2"
+    dest: "/etc/apache2/sites-available/{{ http_conf }}"
+  notify: restart apache2
+  when: ansible_distribution == "Ubuntu"
+  tags: apache
+
+- name: 8. Ubuntu | Enable new site
+  shell: /usr/sbin/a2ensite {{ http_conf }}
+  notify: Reload Apache
+  when: ansible_distribution == "Ubuntu"
+  tags: apache
+
+# Database Creation
+- name: 9. | Creates database for WordPress
+  mysql_db:
+    name: "{{ mysql_db }}"
+    state: present
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
+  tags: mariadb
+
+- name: 10. | Create MySQL user for WordPress
+  mysql_user:
+    name: "{{ mysql_user }}"
+    password: "{{ mysql_password }}"
+    priv: "{{ mysql_db }}.*:ALL"
+    state: present
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
+  tags: mariadb

@@ -1,0 +1,31 @@
+---
+
+rhel7_mariadb_packages:
+  - MariaDB-server
+  - MySQL-python
+  - python3-PyMySQL
+
+rhel8_mariadb_packages:
+  - mariadb-server
+  - python3-PyMySQL
+
+  
+ubuntu_mariadb_packages:
+  - mariadb-server
+  - python-mysqldb
+  - python3-pymysql
+
+mariadb_service: mariadb
+
+mariadb_repo_apt: 'deb https://mirrors.nxthost.com/mariadb/repo/{{ mariadb_version }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release | lower }} main'
+
+#######
+
+mariadb_repo_yum:
+  - name: mariadb
+    description: Official MariaDB repository
+    baseurl: http://yum.mariadb.org/{{ mariadb_version }}/{{ ansible_distribution|lower|regex_replace('redhat', 'rhel') }}{{ ansible_distribution_major_version }}-amd64
+    gpgcheck: true
+    gpgkey: https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+    state: present
+
