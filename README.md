@@ -2,7 +2,7 @@
 
 This ansible playbooks will:
 <ul>
-  <li>Install Epel Release Repository</li>
+  <li>Install Epel Release Repository (RHEL/CENTOS)</li>
   <li>Install Lamp Stack(Install && secure mariadb, Install && hardening Httpd, install php from remi repository)</li>
   <li>Install Wordpress</li>
   <li>Configure Your VirtualHost</li> 
