@@ -1,5 +1,5 @@
 ---
 all:
   hosts:
-    ylcldswas01.yallalabs.local:
-      ansible_host: 192.168.1.150
+    YOUR_PUBLIC_DNS_INSTANCE:
+      ansible_host: YOUR_PUBLIC_IP_INSTANCE
