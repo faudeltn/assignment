@@ -19,7 +19,7 @@ secret_key = "CHANGE_ME"
 
 #### 04- change the ami key with your value, check the [Ami references](#AMI-REFERENCES) to choose your image: 
 ```
-ami = "CHANGE_MI"
+ami = "CHANGE_ME"
 ```
 
 #### 05- initialize terraform working directory bu runing the below command: 
@@ -54,3 +54,7 @@ public_ip = XXX.XXX.XXX.XXX
 | Ubuntu 16.04 LTS | ami-0ae82b98c54a93226  |
 | Ubuntu 18.04 LTS | ami-0748c300929be9a20  |
 | Ubuntu 20.04 LTS | ami-0b74d52f736d963d1  |
+| Rhel 8           | ami-05f5fb99d4803eb99  |
+| Rhel 7           | ami-                   |
+| centOS 8         | ami-                   |
+| centOS 7         | ami-                   |
