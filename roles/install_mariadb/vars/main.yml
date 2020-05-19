@@ -12,7 +12,7 @@ rhel8_mariadb_packages:
   
 ubuntu_mariadb_packages:
   - mariadb-server
-  - python-mysqldb
+  #- python-mysqldb
   - python3-pymysql
 
 mariadb_service: mariadb
