@@ -11,7 +11,7 @@ This ansible playbooks will:
  
 # Requirements
   Ubuntu : 16.04 LTS / 18.04 LTS / 20.04 LTS
-  Redhat/CentOS: 7
+  Redhat/CentOS: 7 / 8
 
 
 #### 01- modify the following variables in the file inventory/group_vars/all.yml by yours to gain access to the aws instance(s).                                                                    
